@@ -4,7 +4,7 @@
 
 namespace ode
 {
-template <auto begin, auto end, auto increment, class function_type>
+template <auto begin, auto end, auto increment, typename function_type>
 constexpr void constexpr_for(function_type&& function)
 {
   if constexpr (begin < end)
