@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ode/tableau/butcher_tableau.hpp>
+#include <ode/utility/sequence.hpp>
 
 namespace ode
 {
