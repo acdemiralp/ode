@@ -53,7 +53,7 @@ public:
     }
   }
 
-  template <class y_type>
+  template <typename y_type>
   static constexpr auto function()
   {
     return std::bind(evaluate<y_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
