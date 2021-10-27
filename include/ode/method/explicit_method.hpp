@@ -49,7 +49,7 @@ public:
       {
         sum += k[i] * std::get<i>(tableau::b);
       });
-      return y + sum * h;
+      return y_type(y + sum * h);
     }
   }
 
