@@ -4,6 +4,7 @@
 #include <functional>
 #include <utility>
 
+#include <ode/tableau/tableau_traits.hpp>
 #include <ode/utility/constexpr_for.hpp>
 #include <ode/utility/triangular_number.hpp>
 
@@ -12,12 +13,13 @@ namespace ode
 template <typename tableau>
 class explicit_method
 {
+public:
   using t_type    = typename tableau::type;
   template <typename y_type>
   using dydt_type = std::function<y_type(const y_type&, t_type)>;
 
   template <typename y_type>
-  static constexpr y_type evaluate(const y_type& y, t_type t, const dydt_type<y_type>& f, t_type h)
+  static constexpr auto evaluate(const y_type& y, t_type t, const dydt_type<y_type>& f, t_type h)
   {
     std::array<y_type, tableau::stages> k;
     constexpr_for<0, tableau::stages, 1>([&y, &t, &f, &h, &k] (auto i)
@@ -30,23 +32,31 @@ class explicit_method
       k[i] = f(y + sum * h, t + std::get<i>(tableau::c) * h);
     });
 
-    y_type sum;
-    constexpr_for<0, tableau::stages, 1>([&k, &sum] (auto i)
+    if constexpr (ode::is_extended_butcher_tableau_v<tableau>)
     {
-      sum += k[i] * std::get<i>(tableau::b);
-    });
-    return y + sum * h;
+      y_type higher, lower;
+      constexpr_for<0, tableau::stages, 1>([&k, &higher, &lower] (auto i)
+      {
+        higher += k[i] * std::get<i>(tableau::b );
+        lower  += k[i] * std::get<i>(tableau::bs);
+      });
+      return std::array<y_type, 2>{y + higher * h, (higher - lower) * h};
+    }
+    else
+    {
+      y_type sum;
+      constexpr_for<0, tableau::stages, 1>([&k, &sum] (auto i)
+      {
+        sum += k[i] * std::get<i>(tableau::b);
+      });
+      return y + sum * h;
+    }
   }
 
   template <class y_type>
-  static constexpr std::function<y_type(const y_type&, t_type, const dydt_type<y_type>&, t_type)> function()
+  static constexpr auto function()
   {
-    return std::bind(
-      static_cast<y_type(*)(const y_type&, t_type, const dydt_type<y_type>&, t_type)>(evaluate),
-      std::placeholders::_1,
-      std::placeholders::_2,
-      std::placeholders::_3,
-      std::placeholders::_4);
+    return std::bind(evaluate<y_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
   }
 };
 }
