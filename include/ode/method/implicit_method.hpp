@@ -10,50 +10,64 @@
 
 namespace ode
 {
-template <typename tableau>
+template <typename tableau_type_>
 class implicit_method
 {
 public:
-  using t_type      = typename tableau::type;
-  template <typename y_type>
-  using dydt_type   = std::function<y_type(const y_type&, t_type)>;
-  template <typename y_type, typename j_type>
-  using d2ydt2_type = std::function<j_type(const y_type&, t_type)>;
+  using tableau_type = tableau_type_;
 
-  template <typename y_type, typename j_type>
-  static constexpr auto evaluate(const y_type& y, t_type t, const dydt_type<y_type>& f, const d2ydt2_type<y_type, j_type>& j, t_type h)
+  template <typename problem_type>
+  static constexpr auto evaluate(const problem_type& problem, const typename problem_type::time_type step_size)
   {
-    std::array<y_type, tableau::stages> k;
-    constexpr_for<0, tableau::stages, 1>([&y, &t, &f, &j, &h, &k] (auto i)
+    using value_type = typename problem_type::value_type;
+
+    std::array<value_type, tableau_type::stages> stages;
+    constexpr_for<0, tableau_type::stages, 1>([&problem, &step_size, &stages] (auto i)
     {
-      // TODO: Compute each k_i by solving a system of equations.
+      // TODO: Compute each k_i using a root finding algorithm e.g. Newton-Raphson.
+      // auto y_next    = y;
+      // auto t_next    = t + h;
+      // 
+      // auto dydt      = f(y, t_next);
+      // auto b_value   = dydt * h;
+      // auto jacobian  = j(y, t_next) * h - j_type::Identity();
+      // y_next        -= jacobian.partialPivLu().solve(b_value);
+      // 
+      // while (b_value.l2() > std::numeric_limits<t_type>::epsilon())
+      // {
+      //   dydt    = f(y, t_next);
+      //   b_value = y - y_next + dydt * h;
+      //   // jacobian = j(y_next, t_next) * h - j_type::Identity(); // Modified Newton-Raphson computes the Jacobian only once.
+      //   y_next -= jacobian.partialPivLu().solve(b_value);
+      // }
+      std::get<i>(stages) = value_type(42);
     });
 
-    if constexpr (is_extended_butcher_tableau_v<tableau>)
+    if constexpr (is_extended_butcher_tableau_v<tableau_type>)
     {
-      y_type higher, lower;
-      constexpr_for<0, tableau::stages, 1>([&k, &higher, &lower] (auto i)
+      value_type higher, lower;
+      constexpr_for<0, tableau_type::stages, 1>([&stages, &higher, &lower] (auto i)
       {
-        higher += k[i] * std::get<i>(tableau::b );
-        lower  += k[i] * std::get<i>(tableau::bs);
+        higher += std::get<i>(stages) * std::get<i>(tableau_type::b );
+        lower  += std::get<i>(stages) * std::get<i>(tableau_type::bs);
       });
-      return extended_result<y_type> {y + higher * h, (higher - lower) * h};
+      return extended_result<value_type> {problem.value + higher * step_size, (higher - lower) * step_size};
     }
     else
     {
-      y_type sum;
-      constexpr_for<0, tableau::stages, 1>([&k, &sum] (auto i)
+      value_type sum;
+      constexpr_for<0, tableau_type::stages, 1>([&stages, &sum] (auto i)
       {
-        sum += k[i] * std::get<i>(tableau::b);
+        sum += std::get<i>(stages) * std::get<i>(tableau_type::b);
       });
-      return y_type(y + sum * h);
+      return value_type(problem.value + sum * step_size);
     }
   }
 
-  template <typename y_type, typename j_type>
+  template <typename problem_type>
   static constexpr auto function()
   {
-    return std::bind(evaluate<y_type, j_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
+    return std::bind(evaluate<problem_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
   }
 };
 }
