@@ -11,53 +11,53 @@
 
 namespace ode
 {
-template <typename tableau>
+template <typename tableau_type_>
 class explicit_method
 {
 public:
-  using t_type    = typename tableau::type;
-  template <typename y_type>
-  using dydt_type = std::function<y_type(const y_type&, t_type)>;
+  using tableau_type = tableau_type_;
 
-  template <typename y_type>
-  static constexpr auto evaluate(const y_type& y, t_type t, const dydt_type<y_type>& f, t_type h)
+  template <typename problem_type>
+  static constexpr auto evaluate(const problem_type& problem, const typename problem_type::time_type step_size)
   {
-    std::array<y_type, tableau::stages> k;
-    constexpr_for<0, tableau::stages, 1>([&y, &t, &f, &h, &k] (auto i)
+    using value_type = typename problem_type::value_type;
+
+    std::array<value_type, tableau_type::stages> stages;
+    constexpr_for<0, tableau_type::stages, 1>([&problem, &step_size, &stages] (auto i)
     {
-      y_type sum;
-      constexpr_for<0, i.value, 1>([&k, &sum, &i] (auto j)
+      value_type sum;
+      constexpr_for<0, i.value, 1>([&stages, &sum, &i] (auto j)
       {
-        sum += k[j] * std::get<triangular_number<i.value - 1> + j.value>(tableau::a);
+        sum += std::get<j>(stages) * std::get<triangular_number<i.value - 1> + j.value>(tableau_type::a);
       });
-      k[i] = f(y + sum * h, t + std::get<i>(tableau::c) * h);
+      std::get<i>(stages) = problem.derivative(problem.value + sum * step_size, problem.time + std::get<i>(tableau_type::c) * step_size);
     });
 
-    if constexpr (is_extended_butcher_tableau_v<tableau>)
+    if constexpr (is_extended_butcher_tableau_v<tableau_type>)
     {
-      y_type higher, lower;
-      constexpr_for<0, tableau::stages, 1>([&k, &higher, &lower] (auto i)
+      value_type higher, lower;
+      constexpr_for<0, tableau_type::stages, 1>([&stages, &higher, &lower] (auto i)
       {
-        higher += k[i] * std::get<i>(tableau::b );
-        lower  += k[i] * std::get<i>(tableau::bs);
+        higher += std::get<i>(stages) * std::get<i>(tableau_type::b );
+        lower  += std::get<i>(stages) * std::get<i>(tableau_type::bs);
       });
-      return extended_result<y_type> {y + higher * h, (higher - lower) * h};
+      return extended_result<value_type> {problem.value + higher * step_size, (higher - lower) * step_size};
     }
     else
     {
-      y_type sum;
-      constexpr_for<0, tableau::stages, 1>([&k, &sum] (auto i)
+      value_type sum;
+      constexpr_for<0, tableau_type::stages, 1>([&stages, &sum] (auto i)
       {
-        sum += k[i] * std::get<i>(tableau::b);
+        sum += std::get<i>(stages) * std::get<i>(tableau_type::b);
       });
-      return y_type(y + sum * h);
+      return value_type(problem.value + sum * step_size);
     }
   }
 
-  template <typename y_type>
+  template <typename problem_type>
   static constexpr auto function()
   {
-    return std::bind(evaluate<y_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+    return std::bind(evaluate<problem_type>, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
   }
 };
 }

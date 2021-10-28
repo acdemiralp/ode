@@ -2,6 +2,6 @@
 
 namespace ode
 {
-template <auto n>
-constexpr auto triangular_number = n * (n + 1) / 2;
+template <auto rank>
+constexpr auto triangular_number = rank * (rank + 1) / 2;
 }

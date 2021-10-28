@@ -9,9 +9,9 @@ namespace ode
 {
 template <typename a, typename b, typename bs, typename c>
 struct extended_butcher_tableau { };
-template <typename type_, type_... a_, type_... b_, type_... bs_, type_... c_>
-struct extended_butcher_tableau<sequence<type_, a_...>, sequence<type_, b_...>, sequence<type_, bs_...>, sequence<type_, c_...>>
-:      butcher_tableau         <sequence<type_, a_...>, sequence<type_, b_...>,                          sequence<type_, c_...>>
+template <typename type, type... a, type... b, type... bs_, type... c>
+struct extended_butcher_tableau<sequence<type, a...>, sequence<type, b...>, sequence<type, bs_...>, sequence<type, c...>>
+:      butcher_tableau         <sequence<type, a...>, sequence<type, b...>,                         sequence<type, c...>>
 {
   static constexpr auto bs = std::array { bs_... };
 };

@@ -4,13 +4,15 @@
 
 namespace ode
 {
-template <typename value_type, typename time_type>
+template <typename value_type_, typename time_type_>
 struct initial_value_problem
 {
-  using function_type = std::function<value_type(const value_type&, time_type)>;
+  using value_type      = value_type_;
+  using time_type       = time_type_ ;
+  using derivative_type = std::function<value_type(const value_type&, time_type)>;
 
-  value_type    y;
-  time_type     t;
-  function_type f;
+  value_type      value     ;
+  time_type       time      ;
+  derivative_type derivative;
 };
 }
