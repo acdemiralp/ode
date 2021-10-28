@@ -4,24 +4,41 @@
 
 #include <Eigen/Core>
 
+#include <ode/iterator/fixed_step_iterator.hpp>
 #include <ode/method/explicit_method.hpp>
+#include <ode/problem/initial_value_problem.hpp>
 #include <ode/tableau/explicit/forward_euler.hpp>
 
 TEST_CASE("ODE Test")
 {
-  using method = ode::explicit_method<ode::forward_euler_tableau<float>>;
+  using method_type  = ode::explicit_method<ode::forward_euler_tableau<float>>;
+  using problem_type = ode::initial_value_problem<Eigen::Vector3f, float>;
 
-  const Eigen::Vector3f y0 (0.0f, 0.0f, 0.0f);
-  const float           t0 (0.0f);
-  const float           h  (1.0f);
-  const std::function   f  = [ ] (const Eigen::Vector3f& y, const float h)
+  const auto problem  = problem_type
   {
-    return Eigen::Vector3f(1.0f, 0.0f, 0.0f);
+    Eigen::Vector3f(0.0f, 0.0f, 0.0f),
+    0.0f,
+    [ ] (const Eigen::Vector3f& y, const float h)
+    {
+      return Eigen::Vector3f(1.0f, 0.0f, 0.0f);
+    }
   };
 
-  auto result = method::evaluate(y0, t0, f, h);
+  auto result = method_type::evaluate(problem, 1.0f);
 
   REQUIRE(result[0] == 1.0f);
   REQUIRE(result[1] == 0.0f);
   REQUIRE(result[2] == 0.0f);
+
+  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f);
+
+  iterator++;
+  REQUIRE(iterator->value[0] == 1.0f);
+  REQUIRE(iterator->value[1] == 0.0f);
+  REQUIRE(iterator->value[2] == 0.0f);
+
+  iterator++;
+  REQUIRE(iterator->value[0] == 2.0f);
+  REQUIRE(iterator->value[1] == 0.0f);
+  REQUIRE(iterator->value[2] == 0.0f);
 }
