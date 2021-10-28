@@ -6,6 +6,7 @@
 
 #include <ode/tableau/tableau_traits.hpp>
 #include <ode/utility/constexpr_for.hpp>
+#include <ode/utility/extended_result.hpp>
 
 namespace ode
 {
@@ -17,7 +18,7 @@ public:
   template <typename y_type>
   using dydt_type   = std::function<y_type(const y_type&, t_type)>;
   template <typename y_type, typename j_type>
-  using d2ydt2_type = std::function<y_type(const y_type&, t_type)>;
+  using d2ydt2_type = std::function<j_type(const y_type&, t_type)>;
 
   template <typename y_type, typename j_type>
   static constexpr auto evaluate(const y_type& y, t_type t, const dydt_type<y_type>& f, const d2ydt2_type<y_type, j_type>& j, t_type h)
@@ -25,10 +26,10 @@ public:
     std::array<y_type, tableau::stages> k;
     constexpr_for<0, tableau::stages, 1>([&y, &t, &f, &j, &h, &k] (auto i)
     {
-      // TODO
+      // TODO: Compute each k_i by solving a system of equations.
     });
 
-    if constexpr (ode::is_extended_butcher_tableau_v<tableau>)
+    if constexpr (is_extended_butcher_tableau_v<tableau>)
     {
       y_type higher, lower;
       constexpr_for<0, tableau::stages, 1>([&k, &higher, &lower] (auto i)
@@ -36,7 +37,7 @@ public:
         higher += k[i] * std::get<i>(tableau::b );
         lower  += k[i] * std::get<i>(tableau::bs);
       });
-      return std::array<y_type, 2>{y + higher * h, (higher - lower) * h};
+      return extended_result<y_type> {y + higher * h, (higher - lower) * h};
     }
     else
     {

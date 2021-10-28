@@ -6,6 +6,7 @@
 
 #include <ode/tableau/tableau_traits.hpp>
 #include <ode/utility/constexpr_for.hpp>
+#include <ode/utility/extended_result.hpp>
 #include <ode/utility/triangular_number.hpp>
 
 namespace ode
@@ -32,7 +33,7 @@ public:
       k[i] = f(y + sum * h, t + std::get<i>(tableau::c) * h);
     });
 
-    if constexpr (ode::is_extended_butcher_tableau_v<tableau>)
+    if constexpr (is_extended_butcher_tableau_v<tableau>)
     {
       y_type higher, lower;
       constexpr_for<0, tableau::stages, 1>([&k, &higher, &lower] (auto i)
@@ -40,7 +41,7 @@ public:
         higher += k[i] * std::get<i>(tableau::b );
         lower  += k[i] * std::get<i>(tableau::bs);
       });
-      return std::array<y_type, 2>{y + higher * h, (higher - lower) * h};
+      return extended_result<y_type> {y + higher * h, (higher - lower) * h};
     }
     else
     {
