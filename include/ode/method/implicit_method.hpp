@@ -10,6 +10,12 @@
 
 namespace ode
 {
+template <typename type>
+class root_finding_algorithm
+{
+  
+};
+
 template <typename tableau_type_>
 class implicit_method
 {

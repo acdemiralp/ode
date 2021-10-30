@@ -55,12 +55,12 @@ public:
       else
       {
         step_size_ = error_checker_type::adapt_step(result.error, step_size_);
-        return operator++(); // Retry with the adjusted step size.
+        return operator++(); // Retry with the adapted step size.
       }
     }
     else
     {
-      // Non-extended Butcher tableau may nevertheless be used with adaptive step iterators, but their step size will not get adjusted.
+      // Non-extended Butcher tableau may be used with adaptive step iterators, but their step size will not be adapted.
       problem_.value = method_type::evaluate(problem_, step_size_);
       problem_.time += step_size_;
     }
