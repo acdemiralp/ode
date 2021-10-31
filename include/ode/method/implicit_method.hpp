@@ -54,8 +54,8 @@ public:
       value_type higher, lower;
       constexpr_for<0, tableau_type::stages, 1>([&stages, &higher, &lower] (auto i)
       {
-        higher += std::get<i>(stages) * std::get<i>(tableau_type::b );
-        lower  += std::get<i>(stages) * std::get<i>(tableau_type::bs);
+        higher = higher + std::get<i>(stages) * std::get<i>(tableau_type::b );
+        lower  = lower  + std::get<i>(stages) * std::get<i>(tableau_type::bs);
       });
       return extended_result<value_type> {problem.value + higher * step_size, (higher - lower) * step_size};
     }
@@ -64,7 +64,7 @@ public:
       value_type sum;
       constexpr_for<0, tableau_type::stages, 1>([&stages, &sum] (auto i)
       {
-        sum += std::get<i>(stages) * std::get<i>(tableau_type::b);
+        sum = sum + std::get<i>(stages) * std::get<i>(tableau_type::b);
       });
       return value_type(problem.value + sum * step_size);
     }
