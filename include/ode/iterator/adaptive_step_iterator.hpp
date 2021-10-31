@@ -4,24 +4,24 @@
 #include <iterator>
 
 #include <ode/tableau/tableau_traits.hpp>
-#include <ode/utility/error_checker.hpp>
+#include <ode/utility/error_evaluator.hpp>
 
 namespace ode
 {
-template <typename method_type_, typename problem_type_, typename error_checker_type_ = error_checker>
+template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = error_evaluator>
 class adaptive_step_iterator
 {
 public:
-  using method_type        = method_type_;
-  using problem_type       = problem_type_;
-  using error_checker_type = error_checker_type_;
-  using time_type          = typename problem_type::time_type;
+  using method_type          = method_type_;
+  using problem_type         = problem_type_;
+  using error_evaluator_type = error_evaluator_type_;
+  using time_type            = typename problem_type::time_type;
 
-  using iterator_category  = std::input_iterator_tag; // Single pass read forward.
-  using difference_type    = std::ptrdiff_t;
-  using value_type         = problem_type_;
-  using pointer            = value_type const*;
-  using reference          = value_type const&;
+  using iterator_category    = std::input_iterator_tag; // Single pass read forward.
+  using difference_type      = std::ptrdiff_t;
+  using value_type           = problem_type_;
+  using pointer              = value_type const*;
+  using reference            = value_type const&;
 
   explicit adaptive_step_iterator             (const problem_type& problem, const time_type initial_step_size = time_type(1))
   : problem_(problem), step_size_(initial_step_size)
@@ -47,22 +47,25 @@ public:
   {
     if constexpr (is_extended_butcher_tableau_v<typename method_type::tableau_type>)
     {
-      if (const auto result = method_type::evaluate(problem_, step_size_); error_checker_type::accept(result.error))
+      const auto result     = method_type         ::apply   (problem_, step_size_);
+      const auto evaluation = error_evaluator_type::evaluate(problem_, step_size_, result);
+
+      if (evaluation.accept)
       {
         problem_.value = result.value;
         problem_.time += step_size_;
-        // TODO: Increase time step.
+        step_size_     = evaluation.next_step_size;
       }
       else
       {
-        step_size_ = error_checker_type::adapt_step(result.error, step_size_);
+        step_size_     = evaluation.next_step_size;
         return operator++(); // Retry with the adapted step size.
       }
     }
     else
     {
       // Non-extended Butcher tableau may be used with adaptive step iterators, but their step size will not be adapted.
-      problem_.value = method_type::evaluate(problem_, step_size_);
+      problem_.value = method_type::apply(problem_, step_size_);
       problem_.time += step_size_;
     }
     return *this;

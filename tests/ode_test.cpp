@@ -24,7 +24,7 @@ TEST_CASE("ODE Test")
     }
   };
 
-  auto result = method_type::evaluate(problem, 1.0f);
+  auto result = method_type::apply(problem, 1.0f);
 
   REQUIRE(result[0] == 1.0f);
   REQUIRE(result[1] == 0.0f);

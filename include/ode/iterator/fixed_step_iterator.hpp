@@ -44,9 +44,9 @@ public:
   constexpr fixed_step_iterator& operator++()
   {
     if constexpr (is_extended_butcher_tableau_v<typename method_type::tableau_type>)
-      problem_.value = method_type::evaluate(problem_, step_size_).value;
+      problem_.value = method_type::apply(problem_, step_size_).value;
     else
-      problem_.value = method_type::evaluate(problem_, step_size_);
+      problem_.value = method_type::apply(problem_, step_size_);
 
     problem_.time += step_size_;
 
