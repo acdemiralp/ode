@@ -10,7 +10,7 @@ struct error_checker
     constexpr static auto absolute_error = 1e-6;
     constexpr static auto relative_error = 1e-6;
 
-    auto tolerance = || |err_i| / (absolute_error + relative_error * (a_x * |x_i| + a_dxdt_lower * |dxdt_i| )) ||
+    // auto tolerance = || |err_i| / (absolute_error + relative_error * (a_x * |x_i| + a_dxdt_lower * |dxdt_i| )) ||
 
     return true;
   }
