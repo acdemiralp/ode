@@ -17,9 +17,10 @@ Header-only, dependency-free ordinary differential equation solvers in C++20.
 - The `[initial_value|boundary_value]_problem` encapsulate the (initial) state of an ordinary differential equation problem.
 - The `time_type`  of a problem must be an arithmetic type    (i.e. satisfy `std::is_arithmetic<type>`).
 - The `value_type` of a problem must be default constructible (i.e. satisfy `std::is_default_constructible<type>`) and furthermore provide the following operators:
-  - `value_type operator+ (const value_type& other )`.
-  - `value_type operator- (const value_type& other )`.
-  - `value_type operator* (const time_type&  scalar)`.
+  - `value_type operator+(const value_type& lhs, const value_type& rhs)`.
+  - `value_type operator-(const value_type& lhs, const value_type& rhs)`.
+  - `value_type operator/(const value_type& lhs, const value_type& rhs)`.
+  - `value_type operator*(const value_type& lhs, const time_type&  rhs)`.
   - Note that any decent linear algebra library such as Eigen supports this functionality out-of-the-box. If yours does not, you can implement them outside of the class.
 
 ### Methods
