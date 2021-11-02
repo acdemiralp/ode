@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include <ode/utility/error_evaluation.hpp>
 
 namespace ode
@@ -15,8 +17,14 @@ struct error_evaluator
     const time_type     step_size, 
     const result_type&  result   )
   {
-    //time_type error = NORM(result.error / (absolute_tolerance + relative_tolerance * MAX(problem.value, result.value)));
-    time_type error = NORM(result.error / (absolute_tolerance + relative_tolerance * ABS(result.value)));
+    time_type sum;
+    for (auto i = 0; i < std::size(problem.value); ++i)
+      sum += std::pow(std::abs(result.error[i] / (absolute_tolerance + relative_tolerance * std::max(problem.value[i], result.value[i]))), 2);
+
+    time_type error = std::sqrt(sum / std::size(problem.value));
+
+    // TODO: INTEGRAL CONTROLLER.
+
     return {error < time_type(1), step_size / error};
   }
 };

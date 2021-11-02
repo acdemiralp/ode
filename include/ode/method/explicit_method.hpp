@@ -30,7 +30,7 @@ public:
       {
         sum = sum + std::get<j>(stages) * std::get<triangular_number<i.value - 1> + j.value>(tableau_type::a);
       });
-      std::get<i>(stages) = problem.derivative(problem.value + sum * step_size, problem.time + std::get<i>(tableau_type::c) * step_size);
+      std::get<i>(stages) = problem.function(problem.time + std::get<i>(tableau_type::c) * step_size, problem.value + sum * step_size);
     });
 
     if constexpr (is_extended_butcher_tableau_v<tableau_type>)

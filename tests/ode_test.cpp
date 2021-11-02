@@ -12,13 +12,13 @@
 TEST_CASE("ODE Test")
 {
   using method_type  = ode::explicit_method<ode::forward_euler_tableau<float>>;
-  using problem_type = ode::initial_value_problem<Eigen::Vector3f, float>;
+  using problem_type = ode::initial_value_problem<float, Eigen::Vector3f>;
 
   const auto problem  = problem_type
   {
-    Eigen::Vector3f(0.0f, 0.0f, 0.0f),
     0.0f,
-    [ ] (const Eigen::Vector3f& y, const float h)
+    Eigen::Vector3f(0.0f, 0.0f, 0.0f),
+    [ ] (const float h, const Eigen::Vector3f& y)
     {
       return Eigen::Vector3f(1.0f, 0.0f, 0.0f);
     }

@@ -19,8 +19,9 @@ Header-only, dependency-free ordinary differential equation solvers in C++20.
 - The `value_type` of a problem must be default constructible (i.e. satisfy `std::is_default_constructible<type>`) and furthermore provide the following operators:
   - `value_type operator+(const value_type& lhs, const value_type& rhs)`.
   - `value_type operator-(const value_type& lhs, const value_type& rhs)`.
-  - `value_type operator/(const value_type& lhs, const value_type& rhs)`.
   - `value_type operator*(const value_type& lhs, const time_type&  rhs)`.
+  - `auto std::data<value_type>(const value_type& value)`.
+  - `auto std::size<value_type>(const value_type& value)`.
   - Note that any decent linear algebra library such as Eigen supports this functionality out-of-the-box. If yours does not, you can implement them outside of the class.
 
 ### Methods
