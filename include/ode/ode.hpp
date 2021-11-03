@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ode/iterator/adaptive_step_iterator.hpp>
-#include <ode/iterator/coupled_iterator.hpp>
+#include <ode/iterator/coupled_fixed_step_iterator.hpp>
 #include <ode/iterator/fixed_step_iterator.hpp>
 #include <ode/method/explicit_method.hpp>
 #include <ode/method/implicit_method.hpp>
