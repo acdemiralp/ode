@@ -23,6 +23,8 @@ Header-only, dependency-free ordinary differential equation solvers in C++20.
   - `auto std::data<value_type>(const value_type& value)`.
   - `auto std::size<value_type>(const value_type& value)`.
   - Note that any decent linear algebra library such as Eigen supports this functionality out-of-the-box. If yours does not, you can implement them outside of the class.
+- The `higher_order_initial_value_problem`s may be decomposed into order many coupled `initial_value_problem`s.
+- The `boundary_value_problem`s may be reduced to `initial_value_problem`s using the shooting method.
 
 ### Methods
 - The `[implicit|semi_implicit|explicit]_method`s encapsulate the operations to perform a single iteration of the solution to a `[initial_value|boundary_value]_problem`.
