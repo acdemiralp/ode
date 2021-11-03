@@ -6,7 +6,7 @@
 namespace ode
 {
 template <typename type = double>
-using forward_euler_tableau = butcher_tableau<
+using backward_euler_tableau = butcher_tableau<
   sequence<type, 1.0>,
   sequence<type, 1.0>,
   sequence<type, 1.0>>;
