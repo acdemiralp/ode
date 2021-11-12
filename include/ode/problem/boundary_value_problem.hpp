@@ -4,11 +4,12 @@
 #include <functional>
 #include <utility>
 
+#include <ode/problem/higher_order_initial_value_problem.hpp>
 #include <ode/problem/initial_value_problem.hpp>
 
 namespace ode
 {
-template <typename value_type_, typename time_type_>
+template <typename time_type_, typename value_type_>
 struct boundary_value_problem
 {
   using time_type     = time_type_ ;
@@ -21,16 +22,16 @@ struct boundary_value_problem
   {
     coupled_type result;
 
-    std::get<0>(result).time     = std::get<0>(times );                   // a
-    std::get<0>(result).value    = std::get<0>(values);                   // y(a) = alpha
-    std::get<0>(result).function = [ ] (time_type x, const value_type& y) // TODO: y' = z. Choose randomly?
+    std::get<0>(result).time     = std::get<0>(times );
+    std::get<0>(result).value    = std::get<0>(values);
+    std::get<0>(result).function = [&] (time_type x, const value_type& y)
     {
-      
+      return function(x, y, std::get<1>(result).value);
     };
 
-    std::get<1>(result).time     = std::get<0>(times );                                                   // a
-    std::get<1>(result).value    = std::get<0>(result).function(std::get<0>(times), std::get<0>(values)); // TODO z(a) = y'(a) = s
-    std::get<1>(result).function = [&] (time_type x, const value_type& z)                                 // z' = f(x,y,z)
+    std::get<1>(result).time     = std::get<0>(times );
+    std::get<1>(result).value    = value_type(); // TODO z(a) = y'(a) = s GUESSED AND OPTIMIZED VIA NEWTON-RAPHSON!
+    std::get<1>(result).function = [&] (time_type x, const value_type& z)
     {
       return function(x, std::get<0>(result).value, z);
     };
