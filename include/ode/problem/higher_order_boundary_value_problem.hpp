@@ -11,6 +11,7 @@
 
 namespace ode
 {
+// Higher order boundary value problems may be decomposed into order many coupled two value boundary value problems.
 template <typename time_type , typename value_type , std::size_t order, typename = std::make_index_sequence<order>>
 struct higher_order_boundary_value_problem;
 template <typename time_type_, typename value_type_, std::size_t order, std::size_t... sequence>
