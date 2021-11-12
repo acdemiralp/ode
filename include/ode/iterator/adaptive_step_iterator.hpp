@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 
 #include <ode/tableau/tableau_traits.hpp>

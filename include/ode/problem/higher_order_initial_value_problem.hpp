@@ -1,6 +1,9 @@
 #pragma once
 
+#include <array>
+#include <cstddef>
 #include <functional>
+#include <utility>
 
 #include <ode/problem/initial_value_problem.hpp>
 #include <ode/utility/constexpr_for.hpp>

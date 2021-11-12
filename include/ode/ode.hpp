@@ -8,8 +8,11 @@
 #include <ode/method/method_traits.hpp>
 #include <ode/method/semi_implicit_method.hpp>
 #include <ode/problem/boundary_value_problem.hpp>
+#include <ode/problem/higher_order_boundary_value_problem.hpp>
 #include <ode/problem/higher_order_initial_value_problem.hpp>
 #include <ode/problem/initial_value_problem.hpp>
+#include <ode/root_finding/iterative/newton_raphson_method.hpp>
+#include <ode/root_finding/iterative/secant_method.hpp>
 #include <ode/tableau/explicit/dormand_prince_5.hpp>
 #include <ode/tableau/explicit/forward_euler.hpp>
 #include <ode/tableau/explicit/runge_kutta_4.hpp>
