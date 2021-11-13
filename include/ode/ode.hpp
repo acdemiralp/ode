@@ -8,7 +8,6 @@
 #include <ode/method/method_traits.hpp>
 #include <ode/method/semi_implicit_method.hpp>
 #include <ode/problem/boundary_value_problem.hpp>
-#include <ode/problem/higher_order_boundary_value_problem.hpp>
 #include <ode/problem/higher_order_initial_value_problem.hpp>
 #include <ode/problem/initial_value_problem.hpp>
 #include <ode/root_finding/iterative/newton_raphson_method.hpp>

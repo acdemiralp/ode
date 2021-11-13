@@ -5,7 +5,6 @@
 #include <utility>
 
 #include <ode/problem/higher_order_initial_value_problem.hpp>
-#include <ode/problem/initial_value_problem.hpp>
 
 namespace ode
 {
@@ -15,34 +14,23 @@ struct boundary_value_problem
   using time_type     = time_type_ ;
   using value_type    = value_type_;
   using function_type = std::function<value_type(time_type, const value_type&, const value_type&)>;
-  using coupled_type  = std::array<initial_value_problem<time_type, value_type>, 2>;
-
+  
   [[nodiscard]]
-  constexpr coupled_type to_coupled_first_order_initial_value_problems() const
+  constexpr auto to_initial_value_problem(const value_type& initial_guess = value_type()) const
   {
-    coupled_type result;
-
-    std::get<0>(result).time     = std::get<0>(times );
-    std::get<0>(result).value    = std::get<0>(values);
-    std::get<0>(result).function = [&] (time_type x, const value_type& y)
+    return higher_order_initial_value_problem<time_type, value_type, 2>
     {
-      return function(x, y, std::get<1>(result).value);
+      std::get<0>(times),
+      {
+        std::get<0>(values),
+        initial_guess
+      },
+      function
     };
-
-    std::get<1>(result).time     = std::get<0>(times );
-    std::get<1>(result).value    = value_type(); // TODO z(a) = y'(a) = s GUESSED AND OPTIMIZED VIA NEWTON-RAPHSON!
-    std::get<1>(result).function = [&] (time_type x, const value_type& z)
-    {
-      return function(x, std::get<0>(result).value, z);
-    };
-
-    // TODO: Newton-Raphson is applied after integration: y(std::get<1>(times), s) - std::get<1>(values) = 0.
-
-    return result;
   }
 
-  std::array<time_type , 2> times   ; // a    , b
-  std::array<value_type, 2> values  ; // alpha, beta
+  std::array<time_type , 2> times   ;
+  std::array<value_type, 2> values  ;
   function_type             function;
 };
 }
