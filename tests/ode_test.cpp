@@ -7,34 +7,24 @@
 
 TEST_CASE("ODE Test")
 {
-  using method_type  = ode::explicit_method<ode::forward_euler_tableau<float>>;
-  using problem_type = ode::initial_value_problem<float, Eigen::Vector3f>;
+  using method_type    = ode::explicit_method<ode::runge_kutta_4_tableau<float>>;
+  using problem_type   = ode::initial_value_problem<float, Eigen::Vector3f>;
 
-  const auto problem  = problem_type
+  constexpr auto sigma = 10.0f;
+  constexpr auto rho   = 28.0f;
+  constexpr auto beta  = 8.0f / 3.0f;
+
+  const auto problem   = problem_type
   {
-    0.0f,
-    Eigen::Vector3f(0.0f, 0.0f, 0.0f),
-    [ ] (const float h, const Eigen::Vector3f& y)
+    0.0f,                                         /* t0 */
+    Eigen::Vector3f(16.0f, 16.0f, 16.0f),         /* y0 */
+    [&] (const float t, const Eigen::Vector3f& y) /* y' = f(t, y) */
     {
-      return Eigen::Vector3f(1.0f, 0.0f, 0.0f);
+      return Eigen::Vector3f(sigma * (y[1] - y[0]), y[0] * (rho - y[2]) - y[1], y[0] * y[1] - beta * y[2]); /* Lorenz system */
     }
   };
 
-  auto result = method_type::apply(problem, 1.0f);
-
-  REQUIRE(result[0] == 1.0f);
-  REQUIRE(result[1] == 0.0f);
-  REQUIRE(result[2] == 0.0f);
-
-  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f);
-
-  iterator++;
-  REQUIRE(iterator->value[0] == 1.0f);
-  REQUIRE(iterator->value[1] == 0.0f);
-  REQUIRE(iterator->value[2] == 0.0f);
-
-  iterator++;
-  REQUIRE(iterator->value[0] == 2.0f);
-  REQUIRE(iterator->value[1] == 0.0f);
-  REQUIRE(iterator->value[2] == 0.0f);
+  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f /* h */);
+  for (auto i = 0; i < 1000; ++i)
+    ++iterator;
 }
