@@ -5,7 +5,7 @@ Header-only ordinary differential equation solvers in C++20.
 ```cpp
 #include <ode/ode.hpp>
 
-using method_type  = ode::explicit_method<ode::forward_euler_tableau<float>>;
+using method_type  = ode::explicit_method<ode::runge_kutta_4_tableau<float>>;
 using problem_type = ode::initial_value_problem<float, vector3f>;
 
 std::int32_t main(std::int32_t argc, char** argv)
