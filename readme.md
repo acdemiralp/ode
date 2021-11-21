@@ -1,5 +1,34 @@
 ### ODE
-Header-only, dependency-free ordinary differential equation solvers in C++20.
+Header-only ordinary differential equation solvers in C++20.
+
+### Example: Lorenz system
+```cpp
+#include <ode/ode.hpp>
+
+using method_type  = ode::explicit_method<ode::runge_kutta_4_tableau<float>>;
+using problem_type = ode::initial_value_problem<float, vector3f>;
+
+std::int32_t main(std::int32_t argc, char** argv)
+{
+  const auto sigma   = 10.0f;
+  const auto rho     = 28.0f;
+  const auto beta    = 8.0f / 3.0f;
+
+  const auto problem = problem_type
+  {
+    0.0f,                                  /* t0 */
+    vector3f(16.0f, 16.0f, 16.0f),         /* y0 */         
+    [&] (const float t, const vector3f& y) /* dy/dt = f(t, y) */
+    {
+      return vector3f(sigma * (y[1] - y[0]), y[0] * (rho - y[2]) - y[1], y[0] * y[1] - beta * y[2]);
+    }
+  };
+  
+  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f /* h */);
+  while (true)
+    ++iterator;
+}
+```
 
 ### Butcher Tableau
 - The `[ |extended_]butcher_tableau` encapsulate the coefficients of a Butcher tableau. 
@@ -9,26 +38,14 @@ Header-only, dependency-free ordinary differential equation solvers in C++20.
     - Forward Euler
     - Runge Kutta 4
     - Dormand Prince 5
-  - Implicit:
-    - Backward Euler
-    - Crank Nicolson
 
 ### Problems
-- The `[initial_value|boundary_value]_problem` encapsulate the (initial) state of an ordinary differential equation problem.
-- The `time_type`  of a problem must be an arithmetic type    (i.e. satisfy `std::is_arithmetic<type>`).
-- The `value_type` of a problem must be default constructible (i.e. satisfy `std::is_default_constructible<type>`) and furthermore provide the following operators:
-  - `value_type operator+(const value_type& lhs, const value_type& rhs)`.
-  - `value_type operator-(const value_type& lhs, const value_type& rhs)`.
-  - `value_type operator*(const value_type& lhs, const time_type&  rhs)`.
-  - `auto std::data<value_type>(const value_type& value)`.
-  - `auto std::size<value_type>(const value_type& value)`.
-  - Note that any decent linear algebra library such as Eigen supports this functionality out-of-the-box. If yours does not, you can implement them outside of the class.
+- The `initial_value_problem` encapsulate the (initial) state of an ordinary differential equation problem.
 - The `higher_order_initial_value_problem`s may be decomposed into order many coupled `initial_value_problem`s.
-- The `boundary_value_problem`s may be reduced to `initial_value_problem`s using the shooting method.
 
 ### Methods
-- The `[implicit|semi_implicit|explicit]_method`s encapsulate the operations to perform a single iteration of the solution to a `[initial_value|boundary_value]_problem`.
+- The `[implicit|semi_implicit|explicit]_method`s encapsulate the operations to perform a single iteration of the solution to a `initial_value_problem`.
 - The methods are constructed from `[ |extended_]butcher_tableau`.
 
 ### Iterators
-- The `[fixed_size|adaptive_size]_iterator`s iterate a `[implicit|semi_implicit|explicit]_method` over a `[initial_value|boundary_value]_problem`.
+- The `[fixed_size|adaptive_size]_iterator`s iterate a `explicit_method` over a `initial_value_problem`.
