@@ -9,7 +9,7 @@
 
 namespace ode
 {
-template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = error_evaluator>
+template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = error_evaluator<typename problem_type_::time_type>>
 class adaptive_step_iterator
 {
 public:

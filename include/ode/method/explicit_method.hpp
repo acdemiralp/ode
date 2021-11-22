@@ -28,7 +28,7 @@ public:
       value_type sum;
       constexpr_for<0, i.value, 1>([&stages, &sum, &i] (auto j)
       {
-        sum = sum + std::get<j>(stages) * std::get<triangular_number<i.value - 1> + j.value>(tableau_type::a);
+        sum += std::get<j>(stages) * std::get<triangular_number<i.value - 1> + j.value>(tableau_type::a);
       });
       std::get<i>(stages) = problem.function(problem.time + std::get<i>(tableau_type::c) * step_size, problem.value + sum * step_size);
     });
@@ -38,8 +38,8 @@ public:
       value_type higher, lower;
       constexpr_for<0, tableau_type::stages, 1>([&stages, &higher, &lower] (auto i)
       {
-        higher = higher + std::get<i>(stages) * std::get<i>(tableau_type::b );
-        lower  = lower  + std::get<i>(stages) * std::get<i>(tableau_type::bs);
+        higher += std::get<i>(stages) * std::get<i>(tableau_type::b );
+        lower  += std::get<i>(stages) * std::get<i>(tableau_type::bs);
       });
       return extended_result<value_type> {problem.value + higher * step_size, (higher - lower) * step_size};
     }
@@ -48,7 +48,7 @@ public:
       value_type sum;
       constexpr_for<0, tableau_type::stages, 1>([&stages, &sum] (auto i)
       {
-        sum = sum + std::get<i>(stages) * std::get<i>(tableau_type::b);
+        sum += std::get<i>(stages) * std::get<i>(tableau_type::b);
       });
       return value_type(problem.value + sum * step_size);
     }
