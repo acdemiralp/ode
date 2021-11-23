@@ -6,50 +6,65 @@
 
 namespace ode
 {
-template <typename value>
+template <typename value_type>
 struct quantity_operations { };
 
-template <scalar value>
-struct quantity_operations<value>
+template <scalar value_type>
+struct quantity_operations<value_type>
 {
-  static std::size_t size    (const value& v)
+  template <typename function_type, scalar... value_types>
+  static void        for_each(const function_type& function, const value_types&... values)
+  {
+    function(values...);
+  }
+  static std::size_t size    (const value_type& value)
   {
     return 1;
   }
-  // TODO for_each
 };
 
-template <vector value>
-struct quantity_operations<value>
+template <vector value_type>
+struct quantity_operations<value_type>
 {
-  static std::size_t size    (const value& v)
+  template <typename function_type, vector... value_types>
+  static void        for_each(const function_type& function, const value_types&... values)
   {
-    return v.size();
+    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+      function(values.data()[i]...);
   }
-  static void        for_each(value&... v, const std::function<void(value::value_type&...)>& function)
+  static std::size_t size    (const value_type& value)
   {
-    for (auto i = 0; i < v.size(); ++i)
-      function(v.data()[i]...);
+    return value.size();
   }
 };
 
-template <matrix value>
-struct quantity_operations<value>
+template <matrix value_type>
+struct quantity_operations<value_type>
 {
-  static std::size_t size(const value& v)
+  template <typename function_type, matrix... value_types>
+  static void        for_each(const function_type& function, const value_types&... values)
   {
-    return v.size();
+    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+      function(values.data()[i]...);
   }
-  // TODO for_each
+  static std::size_t size    (const value_type& value)
+  {
+    return value.size();
+  }
 };
 
-template <tensor value>
-struct quantity_operations<value>
+template <tensor value_type>
+struct quantity_operations<value_type>
 {
-  static std::size_t size(const value& v)
+  template <typename function_type, tensor... value_types>
+  static void        for_each(const function_type& function, const value_types&... values)
   {
-    return v.size();
+    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+      function(values.data()[i]...);
   }
-  // TODO for_each
+  static std::size_t size    (const value_type& value)
+  {
+    return value.size();
+  }
 };
 }

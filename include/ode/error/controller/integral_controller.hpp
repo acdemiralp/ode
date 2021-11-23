@@ -21,10 +21,10 @@ struct integral_controller
   error_evaluation<time_type> evaluate(const problem_type& problem, const time_type step_size, const extended_result<value_type>& result)
   {
     time_type squared_sum;
-    operations::for_each(problem.value, result.value, result.error, [&] (const auto& p, const auto& r, const auto& e)
+    operations::for_each([&] (const auto& p, const auto& r, const auto& e)
     {
       squared_sum += std::pow(std::abs(e / (absolute_tolerance + relative_tolerance * std::max(p, r))), 2);
-    });
+    }, problem.value, result.value, result.error);
 
     time_type hairer_norm  = std::sqrt(std::real(squared_sum) / operations::size(problem.value));
     time_type intermediate = std::pow (hairer_norm, time_type(1) / order<typename method_type::tableau_type>) / gamma;
