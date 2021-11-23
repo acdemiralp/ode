@@ -26,12 +26,12 @@ assign_source_group(${PROJECT_FILES})
 ##################################################  Dependencies  ##################################################
 include(import_library)
 
+find_package(Eigen3 REQUIRED NO_MODULE)
+list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
+
 if   (BUILD_TESTS)
   find_package(doctest CONFIG REQUIRED)
   list        (APPEND PROJECT_LIBRARIES doctest::doctest)
-  
-  find_package(Eigen3 REQUIRED NO_MODULE)
-  list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
 endif()
 
 ##################################################    Targets     ##################################################

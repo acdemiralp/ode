@@ -4,9 +4,9 @@
 #include <functional>
 #include <utility>
 
+#include <ode/error/extended_result.hpp>
 #include <ode/tableau/tableau_traits.hpp>
 #include <ode/utility/constexpr_for.hpp>
-#include <ode/utility/extended_result.hpp>
 #include <ode/utility/triangular_number.hpp>
 
 namespace ode

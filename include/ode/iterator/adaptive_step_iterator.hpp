@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <iterator>
 
+#include <ode/error/controller/integral_controller.hpp>
 #include <ode/tableau/tableau_traits.hpp>
-#include <ode/utility/error_evaluator.hpp>
 
 namespace ode
 {
-template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = error_evaluator<typename problem_type_::time_type>>
+template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = integral_controller<method_type_, problem_type_>>
 class adaptive_step_iterator
 {
 public:
@@ -24,8 +24,11 @@ public:
   using pointer              = value_type const*;
   using reference            = value_type const&;
 
-  explicit adaptive_step_iterator             (const problem_type& problem, const time_type initial_step_size = time_type(1))
-  : problem_(problem), step_size_(initial_step_size)
+  explicit adaptive_step_iterator             (
+    const problem_type&         problem           , 
+    const time_type             initial_step_size = time_type(1), 
+    const error_evaluator_type& error_evaluator   = error_evaluator_type())
+  : problem_(problem), step_size_(initial_step_size), error_evaluator_(error_evaluator)
   {
     
   }
@@ -48,8 +51,8 @@ public:
   {
     if constexpr (is_extended_butcher_tableau_v<typename method_type::tableau_type>)
     {
-      const auto result     = method_type         ::apply   (problem_, step_size_);
-      const auto evaluation = error_evaluator_type::evaluate(problem_, step_size_, result);
+      const auto result     = method_type::apply       (problem_, step_size_);
+      const auto evaluation = error_evaluator_.evaluate(problem_, step_size_, result);
 
       if (evaluation.accept)
       {
@@ -84,7 +87,8 @@ public:
   }
 
 protected:
-  problem_type problem_  ;
-  time_type    step_size_;
+  problem_type         problem_        ;
+  time_type            step_size_      ;
+  error_evaluator_type error_evaluator_;
 };
 }
