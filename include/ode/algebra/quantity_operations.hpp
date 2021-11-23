@@ -29,7 +29,8 @@ struct quantity_operations<value_type>
   template <typename function_type, vector... value_types>
   static void        for_each(const function_type& function, const value_types&... values)
   {
-    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+    const auto element_count = std::get<0>(std::tie(values...)).size();
+    for (auto i = 0; i < element_count; ++i)
       function(values.data()[i]...);
   }
   static std::size_t size    (const value_type& value)
@@ -44,7 +45,8 @@ struct quantity_operations<value_type>
   template <typename function_type, matrix... value_types>
   static void        for_each(const function_type& function, const value_types&... values)
   {
-    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+    const auto element_count = std::get<0>(std::tie(values...)).size();
+    for (auto i = 0; i < element_count; ++i)
       function(values.data()[i]...);
   }
   static std::size_t size    (const value_type& value)
@@ -59,7 +61,8 @@ struct quantity_operations<value_type>
   template <typename function_type, tensor... value_types>
   static void        for_each(const function_type& function, const value_types&... values)
   {
-    for (auto i = 0; i < std::get<0>(std::array{values...}).size(); ++i)
+    const auto element_count = std::get<0>(std::tie(values...)).size();
+    for (auto i = 0; i < element_count; ++i)
       function(values.data()[i]...);
   }
   static std::size_t size    (const value_type& value)
