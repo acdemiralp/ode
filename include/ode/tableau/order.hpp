@@ -4,6 +4,6 @@
 
 namespace ode
 {
-template <typename type>
+template <typename tableau_type>
 constexpr std::size_t order = 0;
 }

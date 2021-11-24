@@ -12,7 +12,7 @@
 namespace ode
 {
 template <typename method_type_, typename problem_type_>
-struct integral_controller
+struct proportional_integral_controller
 {
   using method_type  = method_type_                     ;
   using problem_type = problem_type_                    ;
