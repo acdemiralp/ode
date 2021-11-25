@@ -24,7 +24,7 @@ struct proportional_integral_controller
   // Reference: https://doi.org/10.1007/978-3-642-05221-7 Chapter: IV.2, Section: A PI Step Size Control, Equation: 2.43c
   error_evaluation<time_type> evaluate(const problem_type& problem, const time_type step_size, const extended_result<value_type>& result)
   {
-    time_type squared_sum;
+    time_type squared_sum(0);
     operations::for_each([&] (const auto& p, const auto& r, const auto& e)
     {
       squared_sum += std::pow(std::abs(e) / (absolute_tolerance + relative_tolerance * std::max(std::abs(p), std::abs(r))), 2);
