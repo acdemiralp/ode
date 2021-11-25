@@ -19,5 +19,7 @@ using dormand_prince_5_tableau = extended_butcher_tableau<
   sequence<type,               0.0,         1.0 / 5.0,     3.0 /    10.0,    4.0 /   5.0,      8.0 /      9.0,            1.0 , 1.0       >>;
 
 template <typename type>
-constexpr std::size_t order<dormand_prince_5_tableau<type>> = 5;
+constexpr std::size_t order         <dormand_prince_5_tableau<type>> = 5;
+template <typename type>
+constexpr std::size_t extended_order<dormand_prince_5_tableau<type>> = 4;
 }

@@ -58,3 +58,6 @@ std::int32_t main(std::int32_t argc, char** argv)
 #### Iterators
 - The `[fixed_size|adaptive_size]_iterator`s iterate a `explicit_method` over a       `initial_value_problem`.
 - The `coupled_fixed_size_iterator`s         iterate a `explicit_method` over coupled `initial_value_problem`s.
+
+### Acknowledgements
+- The library is inspired by [Boost.Odeint](https://github.com/boostorg/odeint) and [OrdinaryDiffEq.jl](https://github.com/SciML/OrdinaryDiffEq.jl).

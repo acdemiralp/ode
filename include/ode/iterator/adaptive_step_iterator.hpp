@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <iterator>
 
-#include <ode/error/controller/integral_controller.hpp>
+#include <ode/error/controller/proportional_integral_controller.hpp>
 #include <ode/tableau/tableau_traits.hpp>
 
 namespace ode
 {
-template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = integral_controller<method_type_, problem_type_>>
+template <typename method_type_, typename problem_type_, typename error_evaluator_type_ = proportional_integral_controller<method_type_, problem_type_>>
 class adaptive_step_iterator
 {
 public:
