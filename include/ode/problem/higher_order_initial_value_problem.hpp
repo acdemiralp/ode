@@ -53,8 +53,8 @@ struct higher_order_initial_value_problem<time_type_, value_type_, order, std::i
     return result;
   }
 
-  time_type                     time    ;
-  std::array<value_type, order> values  ;
+  time_type                     time    = time_type(0);
+  std::array<value_type, order> values  = {};
   function_type                 function;
 };
 }

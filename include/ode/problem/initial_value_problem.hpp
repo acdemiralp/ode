@@ -11,8 +11,8 @@ struct initial_value_problem
   using value_type    = value_type_;
   using function_type = std::function<value_type(time_type, const value_type&)>;
 
-  time_type     time    ;
-  value_type    value   ;
+  time_type     time    = time_type(0);
+  value_type    value   = {};
   function_type function;
 };
 }
