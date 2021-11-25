@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ode/error/controller/integral_controller.hpp>
+#include <ode/error/controller/proportional_integral_controller.hpp>
+#include <ode/error/controller/proportional_integral_derivative_controller.hpp>
 #include <ode/iterator/adaptive_step_iterator.hpp>
 #include <ode/iterator/coupled_fixed_step_iterator.hpp>
 #include <ode/iterator/fixed_step_iterator.hpp>

@@ -37,12 +37,12 @@ struct integral_controller
     return {error <= time_type(1), step_size * limited};
   }
   
-  const time_type        absolute_tolerance = time_type(1e-6);
-  const time_type        relative_tolerance = time_type(1e-3);
-  const time_type        factor             = time_type(0.8 );
-  const time_type        factor_minimum     = time_type(1e-2);
-  const time_type        factor_maximum     = time_type(1e+2);
+  const time_type            absolute_tolerance = time_type(1e-6);
+  const time_type            relative_tolerance = time_type(1e-3);
+  const time_type            factor             = time_type(0.8 );
+  const time_type            factor_minimum     = time_type(1e-2);
+  const time_type            factor_maximum     = time_type(1e+2);
 
-  static const time_type ceschino_exponent  = time_type(1) / (std::min(order<tableau_type>, extended_order<tableau_type>) + time_type(1));
+  static constexpr time_type ceschino_exponent  = time_type(1) / (std::min(order<tableau_type>, extended_order<tableau_type>) + time_type(1));
 };
 }

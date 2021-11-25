@@ -5,7 +5,7 @@
 #include <Eigen/Core>
 #include <ode/ode.hpp>
 
-TEST_CASE("Coupled ODE Test")
+TEST_CASE("Coupled Test")
 {
   using method_type               = ode::explicit_method<ode::forward_euler_tableau<float>>;
   using second_order_problem_type = ode::higher_order_initial_value_problem<float, Eigen::Vector3f, 2>;
