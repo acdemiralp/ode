@@ -7,7 +7,7 @@ cd vcpkg
 if not exist "vcpkg.exe" call bootstrap-vcpkg.bat
 
 set VCPKG_DEFAULT_TRIPLET=x64-windows
-vcpkg install --recurse doctest eigen3
+vcpkg install --recurse --overlay-ports=../../vcpkg/overlay_ports doctest eigen3
 cd ..
 
 cmake -Ax64 -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake ..

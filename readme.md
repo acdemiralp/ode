@@ -30,22 +30,34 @@ std::int32_t main(std::int32_t argc, char** argv)
 }
 ```
 
-### Butcher Tableau
+### Design Notes
+
+#### Butcher Tableau
 - The `[ |extended_]butcher_tableau` encapsulate the coefficients of a Butcher tableau. 
-- The `type` of a tableau must be an arithmetic type (i.e. satisfy `std::is_arithmetic<type>`).
+- The `type` of a tableau must satisfy `std::is_arithmetic<type>`.
 - The following tableau are currently provided:
   - Explicit:
     - Forward Euler
     - Runge Kutta 4
     - Dormand Prince 5
 
-### Problems
+#### Problems
 - The `initial_value_problem` encapsulate the (initial) state of an ordinary differential equation problem.
 - The `higher_order_initial_value_problem`s may be decomposed into order many coupled `initial_value_problem`s.
+- The `time_type`  of a problem must satisfy `std::is_arithmetic<time_type>`.
+- The `value_type` of a problem must satisfy `std::is_default_constructible<value_type>`, `std::is_assignable<value_type>`, and additionally provide the following operators.
+  - Add assign: `value += value`.
+  - Add       : `value + value -> value`.
+  - Subtract  : `value - value -> value`.
+  - Scale     : `value * time  -> value`.
 
-### Methods
-- The `[implicit|semi_implicit|explicit]_method`s encapsulate the operations to perform a single iteration of the solution to a `initial_value_problem`.
+#### Methods
+- The `explicit_method`s encapsulate the operations to perform a single iteration of the solution to a `initial_value_problem`.
 - The methods are constructed from `[ |extended_]butcher_tableau`.
 
-### Iterators
-- The `[fixed_size|adaptive_size]_iterator`s iterate a `explicit_method` over a `initial_value_problem`.
+#### Iterators
+- The `[fixed_size|adaptive_size]_iterator`s iterate a `explicit_method` over a       `initial_value_problem`.
+- The `coupled_fixed_size_iterator`s         iterate a `explicit_method` over coupled `initial_value_problem`s.
+
+### Acknowledgements
+- The library is inspired by [Boost.Odeint](https://github.com/boostorg/odeint) and [OrdinaryDiffEq.jl](https://github.com/SciML/OrdinaryDiffEq.jl).

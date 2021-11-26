@@ -1,0 +1,7 @@
+{
+  "name"          : "eigen3",
+  "version-string": "3.4.0",
+  "port-version"  : 1,
+  "description"   : "Eigen is a C++ template library for linear algebra.",
+  "homepage"      : "https://gitlab.com/libeigen/eigen/"
+}
