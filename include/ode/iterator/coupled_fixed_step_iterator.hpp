@@ -58,7 +58,7 @@ public:
 
     return *this;
   }
-  constexpr coupled_fixed_step_iterator& operator++(std::int32_t)
+  constexpr coupled_fixed_step_iterator  operator++(std::int32_t)
   {
     coupled_fixed_step_iterator temp = *this;
     ++(*this);
