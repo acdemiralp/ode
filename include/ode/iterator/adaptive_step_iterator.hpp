@@ -74,7 +74,7 @@ public:
     }
     return *this;
   }
-  constexpr adaptive_step_iterator& operator++(std::int32_t)
+  constexpr adaptive_step_iterator  operator++(std::int32_t)
   {
     adaptive_step_iterator temp = *this;
     ++(*this);
