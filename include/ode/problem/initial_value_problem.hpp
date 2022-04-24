@@ -11,8 +11,8 @@ struct initial_value_problem
   using value_type    = value_type_   ;
   using function_type = function_type_;
 
-  time_type     time    = time_type(0);
-  value_type    value   = {};
-  function_type function;
+  time_type     time     = time_type(0);
+  value_type    value    = {};
+  function_type function = {};
 };
 }
