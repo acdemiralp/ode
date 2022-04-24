@@ -24,7 +24,7 @@ std::int32_t main(std::int32_t argc, char** argv)
     }
   };
   
-  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f /* h */);
+  auto iterator = ode::fixed_step_iterator<method_type, problem_type>{problem, 1.0f /* h */};
   while (true)
     ++iterator;
 }
