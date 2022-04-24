@@ -1,15 +1,15 @@
 #pragma once
 
-#include <functional>
+#include <ode/parallel/cuda.hpp>
 
 namespace ode
 {
-template <typename time_type_, typename value_type_>
+template <typename time_type_, typename value_type_, typename function_type_ = function<value_type_(time_type_, const value_type_&)>>
 struct initial_value_problem
 {
-  using time_type     = time_type_ ;
-  using value_type    = value_type_;
-  using function_type = std::function<value_type(time_type, const value_type&)>;
+  using time_type     = time_type_    ;
+  using value_type    = value_type_   ;
+  using function_type = function_type_;
 
   time_type     time    = time_type(0);
   value_type    value   = {};

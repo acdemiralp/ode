@@ -24,7 +24,7 @@ TEST_CASE("ODE Test")
     }
   };
 
-  auto iterator = ode::fixed_step_iterator<method_type, problem_type>(problem, 1.0f /* h */);
+  auto iterator = ode::fixed_step_iterator<method_type, problem_type>{problem, 1.0f /* h */};
   for (auto i = 0; i < 1000; ++i)
     ++iterator;
 }

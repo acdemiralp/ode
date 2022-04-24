@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 project               (ode VERSION 1.0 LANGUAGES CXX)
 list                  (APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 set_property          (GLOBAL PROPERTY USE_FOLDERS ON)
-set                   (CMAKE_CXX_STANDARD 20)
+set                   (CMAKE_CXX_STANDARD 17)
 
 include               (set_max_warning_level)
 set_max_warning_level ()
@@ -26,12 +26,12 @@ assign_source_group(${PROJECT_FILES})
 ##################################################  Dependencies  ##################################################
 include(import_library)
 
-find_package(Eigen3 REQUIRED NO_MODULE)
-list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
-
 if   (BUILD_TESTS)
   find_package(doctest CONFIG REQUIRED)
   list        (APPEND PROJECT_LIBRARIES doctest::doctest)
+
+  find_package(Eigen3 REQUIRED NO_MODULE)
+  list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
 endif()
 
 ##################################################    Targets     ##################################################

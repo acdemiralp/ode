@@ -23,7 +23,7 @@ TEST_CASE("Coupled Test")
     }
   };
 
-  auto iterator = ode::coupled_fixed_step_iterator<method_type, coupled_problem_type>(second_order_problem.to_coupled_first_order(), 1.0f /* h */);
+  auto iterator = ode::coupled_fixed_step_iterator<method_type, coupled_problem_type> {second_order_problem.to_coupled_first_order(), 1.0f /* h */};
   for (auto i = 0; i < 1000; ++i)
     ++iterator;
 }

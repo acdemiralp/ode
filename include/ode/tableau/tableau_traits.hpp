@@ -1,26 +1,26 @@
 #pragma once
 
-#include <type_traits>
-
-#include <ode/tableau/butcher_tableau.hpp>
-#include <ode/tableau/extended_butcher_tableau.hpp>
+#include <ode/parallel/cuda.hpp>
 
 namespace ode
 {
 template <typename type>
-struct is_butcher_tableau                                                                                                                             : std::false_type { };
-template <typename type, type... a, type... b, type... c>
-struct is_butcher_tableau<butcher_tableau<sequence<type, a...>, sequence<type, b...>, sequence<type, c...>>>                                          : std::true_type  { };
-template <typename type, type... a, type... b, type... bs, type... c>
-struct is_butcher_tableau<extended_butcher_tableau<sequence<type, a...>, sequence<type, b...>, sequence<type, bs...>, sequence<type, c...>>>          : std::true_type  { };
+constexpr type        tableau_a ;
+template <typename type>
+constexpr type        tableau_b ;
+template <typename type>
+constexpr type        tableau_bs;
+template <typename type>
+constexpr type        tableau_c ;
 
-template <typename type>
-struct is_extended_butcher_tableau                                                                                                                    : std::false_type { };
-template <typename type, type... a, type... b, type... bs, type... c>
-struct is_extended_butcher_tableau<extended_butcher_tableau<sequence<type, a...>, sequence<type, b...>, sequence<type, bs...>, sequence<type, c...>>> : std::true_type  { };
+template <typename tableau_type>
+constexpr std::size_t stages_v                      = tableau_b<tableau_type>.size();
 
-template <typename type>
-inline constexpr bool is_butcher_tableau_v          = is_butcher_tableau         <type>::value;
-template <typename type>
-inline constexpr bool is_extended_butcher_tableau_v = is_extended_butcher_tableau<type>::value;
+template <typename tableau_type>
+constexpr bool        is_extended_butcher_tableau_v = false;
+
+template <typename tableau_type>
+constexpr std::size_t order_v                       = 1;
+template <typename tableau_type>
+constexpr std::size_t extended_order_v              = 1;
 }

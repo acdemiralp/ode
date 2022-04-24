@@ -5,6 +5,7 @@
 #include <functional>
 #include <utility>
 
+#include <ode/parallel/cuda.hpp>
 #include <ode/problem/initial_value_problem.hpp>
 #include <ode/utility/constexpr_for.hpp>
 #include <ode/utility/parameter_pack_expander.hpp>
@@ -23,7 +24,7 @@ struct higher_order_initial_value_problem<time_type_, value_type_, order, std::i
   using coupled_type  = std::array<initial_value_problem<time_type, value_type>, order>;
 
   template <std::size_t index, std::size_t sequence_index> [[nodiscard]]
-  constexpr const value_type& select_argument       (const value_type& value, const coupled_type& result) const
+  __device__ __host__ constexpr const value_type& select_argument       (const value_type& value, const coupled_type& result) const
   {
     if constexpr (index == sequence_index)
       return value;
@@ -31,7 +32,7 @@ struct higher_order_initial_value_problem<time_type_, value_type_, order, std::i
       return std::get<sequence_index>(result).value;
   }
   [[nodiscard]]
-  constexpr coupled_type      to_coupled_first_order() const
+  __device__ __host__ constexpr coupled_type      to_coupled_first_order() const
   {
     coupled_type result;
     constexpr_for<0, order, 1>([&] (auto i)
@@ -40,7 +41,7 @@ struct higher_order_initial_value_problem<time_type_, value_type_, order, std::i
       {
         time,
         std::get<i>(values),
-        [=, this, &result] (time_type t, const value_type& v)
+        [=, &result] (time_type t, const value_type& v)
         {
           // Example resolution for order 3:
           // return function(t, v              , result[1].value, result[2].value);

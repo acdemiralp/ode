@@ -1,17 +1,16 @@
 #pragma once
 
-#include <ode/tableau/butcher_tableau.hpp>
-#include <ode/tableau/order.hpp>
-#include <ode/utility/sequence.hpp>
+#include <ode/tableau/tableau_traits.hpp>
 
 namespace ode
 {
 template <typename type = double>
-using forward_euler_tableau = butcher_tableau<
-  sequence<type, 0.0>,
-  sequence<type, 1.0>,
-  sequence<type, 0.0>>;
+struct forward_euler_tableau {};
 
 template <typename type>
-constexpr std::size_t order<forward_euler_tableau<type>> = 1;
+__constant__ constexpr auto tableau_a<forward_euler_tableau<type>> = std::array {type(0.0)};
+template <typename type>
+__constant__ constexpr auto tableau_b<forward_euler_tableau<type>> = std::array {type(1.0)};
+template <typename type>
+__constant__ constexpr auto tableau_c<forward_euler_tableau<type>> = std::array {type(0.0)};
 }
