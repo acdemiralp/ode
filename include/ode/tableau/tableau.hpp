@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <cstddef>
 
 #include <ode/parallel/cuda.hpp>
