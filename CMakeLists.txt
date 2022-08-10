@@ -18,7 +18,8 @@ if                    (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif                 ()
 
 ##################################################    Options     ##################################################
-option(BUILD_TESTS "Build tests." OFF)
+option(ODE_BUILD_TESTS "Build tests." OFF)
+option(ODE_USE_CUDA "Enable CUDA (for tests)." OFF)
 
 ##################################################    Sources     ##################################################
 file(GLOB_RECURSE PROJECT_HEADERS include/*.h include/*.hpp include/*.ipp)
@@ -35,12 +36,19 @@ assign_source_group(${PROJECT_FILES})
 ##################################################  Dependencies  ##################################################
 include(import_library)
 
-if   (BUILD_TESTS)
+if   (ODE_BUILD_TESTS)
   find_package(doctest CONFIG REQUIRED)
   list        (APPEND PROJECT_LIBRARIES doctest::doctest)
   
   find_package(Eigen3 REQUIRED NO_MODULE)
   list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
+  
+  if   (ODE_USE_CUDA)
+    enable_language(CUDA)
+    find_package   (CUDA REQUIRED)
+    import_library (CUDA_INCLUDE_DIRS CUDA_LIBRARIES)
+    list           (APPEND PROJECT_COMPILE_OPTIONS $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda --expt-relaxed-constexpr --use_fast_math>)
+  endif()
 endif()
 
 ##################################################    Targets     ##################################################
@@ -76,6 +84,11 @@ if(BUILD_TESTS)
   assign_source_group  (${TEST_MAIN_SOURCES})
 
   file(GLOB PROJECT_TEST_CPPS tests/*.c tests/*.cpp tests/*.cu)
+
+  if   (NOT ODE_USE_CUDA)
+    set_source_files_properties(${PROJECT_TEST_CPPS} PROPERTIES LANGUAGE CXX)
+  endif()
+
   foreach(_SOURCE ${PROJECT_TEST_CPPS})
     get_filename_component(_NAME ${_SOURCE} NAME_WE)
     add_executable        (${_NAME} ${_SOURCE} $<TARGET_OBJECTS:${TEST_MAIN_NAME}>)
