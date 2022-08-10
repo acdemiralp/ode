@@ -18,8 +18,9 @@ if                    (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif                 ()
 
 ##################################################    Options     ##################################################
-option(ODE_BUILD_TESTS "Build tests." OFF)
 option(ODE_USE_CUDA "Enable CUDA (for tests)." OFF)
+option(ODE_USE_EIGEN "Enable Eigen (for implicit methods)." OFF)
+option(ODE_BUILD_TESTS "Build tests." OFF)
 
 ##################################################    Sources     ##################################################
 file(GLOB_RECURSE PROJECT_HEADERS include/*.h include/*.hpp include/*.ipp)
@@ -36,19 +37,21 @@ assign_source_group(${PROJECT_FILES})
 ##################################################  Dependencies  ##################################################
 include(import_library)
 
+if   (ODE_USE_CUDA)
+  enable_language(CUDA)
+  find_package   (CUDA REQUIRED)
+  import_library (CUDA_INCLUDE_DIRS CUDA_LIBRARIES)
+  list           (APPEND PROJECT_COMPILE_OPTIONS $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda --expt-relaxed-constexpr --use_fast_math>)
+endif()
+
+if   (ODE_USE_EIGEN)
+  find_package   (Eigen3 REQUIRED NO_MODULE)
+  list           (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
+endif()
+  
 if   (ODE_BUILD_TESTS)
-  find_package(doctest CONFIG REQUIRED)
-  list        (APPEND PROJECT_LIBRARIES doctest::doctest)
-  
-  find_package(Eigen3 REQUIRED NO_MODULE)
-  list        (APPEND PROJECT_LIBRARIES Eigen3::Eigen)
-  
-  if   (ODE_USE_CUDA)
-    enable_language(CUDA)
-    find_package   (CUDA REQUIRED)
-    import_library (CUDA_INCLUDE_DIRS CUDA_LIBRARIES)
-    list           (APPEND PROJECT_COMPILE_OPTIONS $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda --expt-relaxed-constexpr --use_fast_math>)
-  endif()
+  find_package   (doctest CONFIG REQUIRED)
+  list           (APPEND PROJECT_LIBRARIES doctest::doctest)
 endif()
 
 ##################################################    Targets     ##################################################
