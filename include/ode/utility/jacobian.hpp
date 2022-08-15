@@ -4,16 +4,13 @@
 
 namespace ode
 {
-template <typename function_type>
-std::size_t argument_count_v                                                 = 0;
-template <typename return_value, typename... argument_types>
-std::size_t argument_count_v<std::function<return_value(argument_types...)>> = sizeof...(argument_types);
+template <typename function_type, typename parameter_type>
+struct jacobian_type { };
 
-template <typename function_type>
-auto jacobian(const function_type& function)
+template <typename function_type, typename parameter_type>
+auto jacobian(const function_type& function, const parameter_type& parameter)
 {
-  using result_type          = typename function_type::result_type;
-  using result_gradient_type = ode::gradient<result_type>;
+  using jacobian_type = typename jacobian_type<function_type, parameter_type>::value;
 
   // Example function_type:
   // - Scalar             valued function with scalar parameter x                            (Jacobian is   scalar):
