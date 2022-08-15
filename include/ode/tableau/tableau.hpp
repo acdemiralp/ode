@@ -20,4 +20,7 @@ template <typename type>
 __constant__ constexpr std::size_t order_v          = 1;
 template <typename type>
 __constant__ constexpr std::size_t extended_order_v = 1;
+
+template <typename type>
+__constant__ constexpr std::size_t stages_v         = b_v<type>.size();
 }
