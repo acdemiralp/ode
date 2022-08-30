@@ -4,6 +4,25 @@
 
 #include <ode/problem/initial_value_problem.hpp>
 
+template <typename type>
+struct is_problem : std::bool_constant<false> {};
+
+template <typename type>
+inline constexpr bool is_problem_v = is_problem<type>::value;
+
+template <typename type>
+concept problem = is_problem_v<type>;
+
+template <typename time_type, typename value_type, typename function_type>
+struct initial_value_problem
+{
+  
+};
+
+template <typename time_type, typename value_type, typename function_type>
+struct is_problem<initial_value_problem<time_type, value_type, function_type>> : std::bool_constant<true> {};
+
+
 TEST_CASE("Initial value problem test.")
 {
   using scalar  = float;
